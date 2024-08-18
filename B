@@ -1,0 +1,690 @@
+#include<stdio.h>
+
+#include<stdlib.h>
+
+#include<math.h>
+
+
+
+#define N 32000
+
+
+
+int mergesort(int[], int);
+
+int merge(int[], int, int[], int, int[]);
+
+
+
+int main() {
+
+    int n, ch, a[N], x;
+
+
+
+    printf("Enter 1 for correctness and press 2 for complexity\n");
+
+    scanf("%d", &ch);
+
+
+
+    switch(ch) {
+
+        case 1: {
+
+            printf("Enter the size of the array\n");
+
+            scanf("%d", &n);
+
+
+
+            printf("Enter the array elements\n");
+
+            for (int i = 0; i < n; i++) {
+
+                scanf("%d", &a[i]);
+
+            }
+
+
+
+            mergesort(a, n);
+
+
+
+            printf("The sorted array is \n");
+
+            for (int i = 0; i < n; i++) {
+
+                printf("%d ", a[i]);
+
+            }
+
+            printf("\n");
+
+            break;
+
+        }
+
+
+
+        case 2: {
+
+            int size, arr[N], t1, t2, t3;
+
+            float ln;
+
+
+
+            printf("Enter size of array for complexity calculation of its next 5 multiples\n");
+
+            scanf("%d", &size);
+
+            printf("size\t ascending \t cnlog(n) \t descending \t cnlog(n) \t random \t cnlog(n)\n");
+
+
+
+            for (int i = 1; i <= 5; i++, size *= 2) {
+
+                ln = 2 * size * log(size) / log(2);
+
+
+
+                for (int j = 0; j < size; j++) {
+
+                    arr[j] = j;
+
+                }
+
+                t1 = mergesort(arr, size);
+
+
+
+                for (int j = 0; j < size; j++) {
+
+                    arr[j] = size - j;
+
+                }
+
+                t2 = mergesort(arr, size);
+
+
+
+                for (int j = 0; j < size; j++) {
+
+                    arr[j] = rand() % N;
+
+                }
+
+                t3 = mergesort(arr, size);
+
+
+
+                printf("%d\t%d\t\t%.0f\t\t%d\t\t%.0f\t\t%d\t\t%.0f\n", size, t1, ln, t2, ln, t3, ln);
+
+            }
+
+            printf("Considering c as 2 here\n");
+
+            break;
+
+        }
+
+
+
+        default: {
+
+            exit(0);
+
+        }
+
+    }
+
+}
+
+
+
+int mergesort(int a[], int n) {
+
+
+
+    if (n < 2) {
+
+        return 0;  // Base case: no need to sort arrays with less than 2 elements
+
+    }
+
+
+
+    int mid = n / 2;
+
+    int b[mid], c[n - mid];  // Correctly size the temp arrays b and c
+
+    int c1=0, c2=0, c3=0,count=0;
+
+
+
+    for (int i = 0; i < mid; i++,count++) {
+
+        b[i] = a[i];
+
+    }
+
+    for (int i = mid; i < n; i++,count++) {
+
+        c[i - mid] = a[i];
+
+    }
+
+
+
+    c1 = mergesort(b, mid);
+
+    c2 = mergesort(c, n - mid);
+
+    c3 = merge(b, mid, c, n - mid, a);
+
+
+
+    return count+c3+ c1 + c2;
+
+}
+
+
+
+int merge(int b[], int p, int c[], int q, int a[]) {
+
+    int i = 0, j = 0, k = 0, count = 0;
+
+
+
+    while (i < p && j < q) {
+
+        if (b[i] <= c[j]) {
+
+            a[k++] = b[i++];
+
+        } else {
+
+            a[k++] = c[j++];
+
+        }
+
+        count++;
+
+    }
+
+
+
+    while (i < p) {
+
+        a[k++] = b[i++];
+
+        count++;
+
+    }
+
+
+
+    while (j < q) {
+
+        a[k++] = c[j++];
+
+        count++;
+
+    }
+
+
+
+    return count;
+
+}
+
+
+
+
+//program2
+#include<stdio.h>
+
+#include<stdlib.h>
+
+
+
+int topo[10], k = 0;
+
+
+
+void dfs(int a[][10], int n, int v[], int source) {
+
+    v[source] = 1;
+
+
+
+    for (int i = 1; i <= n; i++) {
+
+        if (!v[i] && (a[source][i])) {
+
+            dfs(a, n, v, i);
+
+        }
+
+    }
+
+
+
+    topo[++k] = source;
+
+}
+
+
+
+int main() {
+
+    int n, a[10][10], v[10] = {0};  // Initialize v[] to 0
+
+    int j;
+
+
+
+    printf("Enter the size of the array (number of vertices):\n");
+
+    scanf("%d", &n);
+
+
+
+    printf("Enter the adjacency matrix (0 or 1):\n");
+
+    for (int i = 1; i <= n; i++) {
+
+        for (j = 1; j <= n; j++) {
+
+            scanf("%d", &a[i][j]);
+
+        }
+
+    }
+
+
+
+    printf("The adjacency matrix is:\n");
+
+    for (int i = 1; i <= n; i++) {
+
+        for (j = 1; j <= n; j++) {
+
+            printf("%d ", a[i][j]);
+
+        }
+
+        printf("\n");
+
+    }
+
+
+
+    // Perform DFS from each unvisited vertex
+
+    for (int i = 1; i <= n; i++) {
+
+        if (v[i] == 0) {
+
+            dfs(a, n, v, i);
+
+        }
+
+    }
+
+
+
+    printf("The topological order is:\n");
+
+    for (int i = k; i >= 1; i--) {
+
+        printf("%d ", topo[i]);
+
+    }
+
+    printf("\n");
+
+
+
+    return 0;
+
+}
+
+
+//program 3
+
+#include<stdio.h>
+
+void Merge(int b[], int p, int c[], int q, int a[]) {
+    int i = 0, j = 0, k = 0;
+    
+    while (i < p && j < q) {
+        if (b[i] <= c[j]) {
+            a[k++] = b[i++];
+        } else {
+            a[k++] = c[j++];
+        }
+    }
+    while (i < p) {
+        a[k++] = b[i++];
+    }
+    while (j < q) {
+        a[k++] = c[j++];
+    }
+}
+
+void MergeSort(int a[], int n) {
+    if (n <= 1)
+        return;
+
+    int b[n], c[n], i;
+    
+    for (i = 0; i < n / 2; i++) {
+        b[i] = a[i];
+    }
+    for (i = n / 2; i < n; i++) {
+        c[i - (n / 2)] = a[i];
+    }
+
+    MergeSort(b, n / 2);
+    MergeSort(c, n - (n / 2));
+    Merge(b, n / 2, c, n - (n / 2), a);
+}
+
+int main() {
+    printf("Enter the number of elements\n");
+    int size;
+    scanf("%d", &size);
+
+    int arr[size];
+    for (int i = 0; i < size; i++) {
+        printf("Enter element %d: \t", i + 1);
+        scanf("%d", &arr[i]);
+    }
+
+    MergeSort(arr, size);
+
+    int i = 0;
+    for (i = 0; i < size - 1; i++) {
+        if (arr[i] == arr[i + 1]) {
+            printf("Array is not Unique\n");
+            break;
+        }
+    }
+    if (i == size - 1) {
+        printf("Array is Unique\n");
+    }
+
+    return 0;
+}
+// program 4
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define SIZE 256
+
+int Table[SIZE];
+
+void shiftTable(char p[10])
+{
+    int i, m;
+    m = strlen(p);
+    for (i = 0; i < SIZE; i++)
+        Table[i] = m;
+    for (i = 0; i <= m - 2; i++)
+        Table[p[i]] = m - 1 - i;
+}
+
+int Horspool(char t[250], char p[10])
+{
+    int i, j, k, m, n;
+    m = strlen(p);
+    n = strlen(t);
+    shiftTable(p);
+    i = m - 1;
+    while (i <= n - 1)
+    {
+        k = 0;
+        while (k < m && p[m - 1 - k] == t[i - k])
+            k += 1;
+        if (k == m)
+            return i - m + 1;
+        else
+            i = i + Table[t[i]];
+    }
+    return -1;
+}
+
+int main()
+{
+    char t[250], p[10];
+    printf("\nEnter the Text :");
+    scanf("%s", t);
+    printf("\nEnter the Pattern :");
+    scanf("%s", p);
+    int flag = Horspool(t, p);
+    if (flag == -1)
+        printf("\nPattern not present in the text\n");
+    else
+        printf("Pattern is found at index %d\n", flag);
+    return 0;
+}
+
+
+// program 5 knapsack
+#include <stdio.h>
+#include <stdlib.h>
+
+int n, W, w[10], v[10], V[10][10], x[10] = {};
+
+int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+void display()
+{
+    int i, j;
+    i = n;
+    j = W;
+    while (i > 0 || j > 0)
+    {
+        if (V[i][j] != V[i - 1][j])
+        {
+            x[i] = 1;
+            j = j - w[i];
+        }
+        i = i - 1;
+    }
+}
+
+int main()
+{
+    int i, j;
+    printf("\nRead number of obj :");
+    scanf("%d", &n);
+    printf("\nRead the weights :\n");
+    for (i = 1; i <= n; i++)
+        scanf("%d", &w[i]);
+    printf("\nRead the profits :\n ");
+    for (i = 1; i <= n; i++)
+        scanf("%d", &v[i]);
+    printf("\nRead the knapsack capacity : ");
+    scanf("%d", &W);
+    for (i = 0; i <= n; i++)
+    {
+        for (j = 0; j <= W; j++)
+        {
+            if (i == 0 || j == 0)
+                V[i][j] = 0;
+            else
+                V[i][j] = ((j - w[i]) < 0) ? V[i - 1][j] : max(V[i - 1][j], V[i - 1][j - w[i]] + v[i]);
+        }
+    }
+    display();
+    printf("\nMax profit  = %d", V[n][W]);
+    printf("\nObjects included are : \n");
+    for (i = 1; i <= n; i++)
+        if (x[i])
+            printf("%d object included\n", i);
+    return 0;
+}
+
+
+// program 6 dijkstra
+#include <stdio.h>
+#define INFINITY 999
+void dijkstra(int cost[10][10], int n, int source, int v[10], int d[10])
+{
+    int min, i, j, u;
+    v[source] = 1;
+    for (i = 1; i <= n; i++)
+    {
+        min = INFINITY;
+        for (j = 1; j <= n; j++)
+        {
+            if (v[j] == 0 && d[j] < min)
+            {
+                min = d[j];
+                u = j;
+            }
+        }
+        v[u] = 1;
+        for (j = 1; j <= n; j++)
+        {
+            if (v[j] == 0 && (d[j] > (d[u] + cost[u][j])))
+                d[j] = d[u] + cost[u][j];
+        }
+    }
+}
+int main()
+{
+    int n;
+    int cost[10][10];
+    int sourceNode;
+    int v[10];
+    int d[10];
+    int i, j;
+    printf("Enter n: ");
+    scanf("%d", &n);
+    printf("Enter Cost Adjacency matrix:\n");
+    for (i = 1; i <= n; i++)
+        for (j = 1; j <= n; j++)
+            scanf("%d", &cost[i][j]);
+    printf("Enter the source (%d to %d):\n", 1, n);
+    scanf("%d", &sourceNode);
+    for (i = 1; i <= n; i++)
+    {
+        d[i] = cost[sourceNode][i];
+        v[i] = 0;
+    }
+    dijkstra(cost, n, sourceNode, v, d);
+    printf("Shortest distance from %d\n\n", sourceNode);
+    for (i = 1; i <= n; i++)
+        printf("%d --> %d = %d\n\n", sourceNode, i, d[i]);
+    return 0;
+}
+
+// program 7
+#include<stdio.h>
+#include<conio.h>
+#define MAX 10
+int s[MAX],x[MAX];
+int d;
+void sumofsub(int p, int k, int r){
+    int i;
+    x[k]=1;
+    if ((p + s[k]) == d){
+        for(i=1; i<=k; i++)
+            if (x[i] == 1)
+                printf("%d ", s[i]);
+        printf("\n");
+    }
+    else if (p+s[k] + s[k+1] <= d)
+        sumofsub(p + s[k],k+1, r-s[k]);
+    if((p +r- s[k] >= d) && (p + s[k+1] <= d)){
+        x[k] = 0;
+        sumofsub(p, k+1,r-s[k]);
+    }
+}
+void main(){
+    int i,n,sum=0;
+    printf("Enter max. number: ");
+    scanf("%d",&n);
+    printf("\n Enter the set in increasing order : \n");
+    for(i=1;i<=n;i++)
+    scanf("%d",&s[i]);
+    printf("\n Enter the max. subset value: ");
+    scanf("%d",&d);
+    for(i=1;i<=n;i++)
+        sum=sum + s[i];
+    if (sum <d|| s[1] > d)
+        printf("n No subset possible");
+    else{
+        sumofsub(0,1,sum);
+    }
+
+}
+// program 8 
+#include <stdio.h>
+#include <stdlib.h>
+int x[10];
+static int c = 1;
+void printBoard(int n)
+{
+
+    int i, j;
+    printf("Solution %d:\n", c++);
+    for (i = 1; i <= n; i++)
+    {
+        for (j = 1; j <= n; j++)
+        {
+            if (x[i] == j)
+                printf("Q\t");
+            else
+                printf("-\t");
+        }
+        printf("\n");
+    }
+}
+int place(int k, int i)
+{
+    int j;
+    for (j = 1; j < k; j++)
+    {
+        if ((x[j] == i) || abs(x[j] - i) == abs(j - k))
+            return 0;
+    }
+    return 1;
+}
+void nQueens(int k, int n)
+{
+    int i, j;
+    for (i = 1; i <= n; i++)
+    {
+        if (place(k, i))
+        {
+            x[k] = i;
+            if (k == n)
+            {
+                printf("\n");
+                printBoard(n);
+            }
+            else
+                nQueens(k + 1, n);
+        }
+    }
+}
+int main()
+{
+    int n;
+    printf("Enter the number of queens:\n");
+    scanf("%d", &n);
+    nQueens(1, n);
+    if (c == 1)
+        printf("No solutions!");
+}
